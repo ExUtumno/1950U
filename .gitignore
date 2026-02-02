@@ -1,0 +1,6 @@
+obj/*
+bin/runtimes/*
+*.json
+*.exe
+*.dll
+*.pdb

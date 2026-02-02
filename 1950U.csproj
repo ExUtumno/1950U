@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable><!--интересно было бы с этим поиграть-->
+    <OutputPath>bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="bin\resources\shader.c" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Raylib-cs" Version="7.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+  </ItemGroup>
+
+  <!--подозреваю, что это больше не нужно-->
+  <Target Name="RemoveUnwantedRuntimes" AfterTargets="Build">
+    <RemoveDir Directories="$(OutputPath)runtimes\linux-x64" />
+    <RemoveDir Directories="$(OutputPath)runtimes\osx-x64" />
+    <RemoveDir Directories="$(OutputPath)runtimes\unix" />
+    <RemoveDir Directories="$(OutputPath)runtimes\win-x86" />
+    <RemoveDir Directories="$(OutputPath)runtimes\win" />
+    <RemoveDir Directories="$(OutputPath)runtimes\osx-arm64" />
+  </Target>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);0162</NoWarn>
+  </PropertyGroup>
+</Project>

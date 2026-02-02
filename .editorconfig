@@ -1,0 +1,28 @@
+﻿[*.cs]
+
+# IDE0040: Add accessibility modifiers
+dotnet_diagnostic.IDE0040.severity = none
+
+# IDE0044: Add readonly modifier
+dotnet_diagnostic.IDE0044.severity = none
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0305: Simplify collection initialization
+dotnet_diagnostic.IDE0305.severity = none
+
+# IDE0270: Use coalesce expression
+dotnet_diagnostic.IDE0270.severity = none
+
+# IDE0074: Use compound assignment
+dotnet_diagnostic.IDE0074.severity = none
+
+# IDE0031: Use null propagation
+dotnet_style_null_propagation = false
+
+# IDE0017: Simplify object initialization
+dotnet_style_object_initializer = false
+
+# IDE0028: Simplify collection initialization
+dotnet_diagnostic.IDE0028.severity = none
