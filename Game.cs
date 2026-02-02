@@ -9,7 +9,7 @@ class Game
 
     public Game(Expr xgame)
     {
-        size = new Vector2(6, 6);
+        size = new Vector2(10, 10);
         templates = [];
 
         ///это делается для того, чтобы подгрузить объектные файлы
@@ -46,22 +46,4 @@ class Game
             scripts.Add(script);
         }
     }
-
-    ///это всего лишь расстояние от точки до границы сцены
-    public float SceneSDF(Vector2 p) => MathF.Min(MathF.Min(0.5f * size.X + p.X, 0.5f * size.X - p.X), MathF.Min(0.5f * size.Y + p.Y, 0.5f * size.Y - p.Y));
-
-    //расстояние от объекта до границы сцены?
-    /*public float SceneSDF(Object o)
-    {
-        Vector2 p = o.position.XY();
-        if (o.template.shape == SHAPE.CUBOID)
-        {
-            return MathF.Min(MathF.Min(0.5f * size.X + p.X, 0.5f * size.X - p.X) - 0.5f * o.size.X, MathF.Min(0.5f * size.Y + p.Y, 0.5f * size.Y - p.Y) - 0.5f * o.size.Y);
-        }
-        else if (o.template.shape == SHAPE.SPHERE || o.template.shape == SHAPE.CYLINDER || o.template.shape == SHAPE.CAPSULE)
-        {
-            return MathF.Min(MathF.Min(0.5f * size.X + p.X, 0.5f * size.X - p.X), MathF.Min(0.5f * size.Y + p.Y, 0.5f * size.Y - p.Y)) - o.size.AverageRadius2D();
-        }
-        else throw new Exception($"unknown shape <{o.template.shape}>");
-    }*/
 }

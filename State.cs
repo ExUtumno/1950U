@@ -107,8 +107,8 @@ class State
     static void Go(Object self, Vector2 dir)
     {
         ///потом тут ещё будет участвовать система коллизий, и в итоге функция будет не-статичной
-        Vector2 xy = self.position.XY() + self.template.speed * Settings.SPEED * dir;
-        self.position += new Vector3(xy, 0f);
+        Vector2 shift = self.template.speed * Settings.SPEED * dir;
+        self.position += new Vector3(shift, 0f);
     }
 
     public void Step(KeyboardState keyboard)
@@ -130,10 +130,6 @@ class State
 
                 if (keyboard.UP) Go(o, o.dir);
                 else if (keyboard.DOWN) Go(o, -o.dir);
-            }
-            else
-            {
-                throw new Exception("policies not implemented yet");
             }
         }
     }

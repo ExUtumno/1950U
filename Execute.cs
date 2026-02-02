@@ -95,6 +95,12 @@ static class ByteCodeHelper
         string nodename = Node.nts[id];
         switch (id)
         {
+            case NODE.PLAYER:
+                {
+                    if (args.Length != 1) throw new Exception($"wrong number {args.Length} of arguments in {nodename}");
+                    args[0].GetObject(state).isPlayer = true;
+                    return Value.VOID;
+                }
             case NODE.DAMAGE: ///(damage target 1 self)
                 {
                     if (args.Length != 3) throw new Exception($"wrong number {args.Length} of arguments in {nodename}");

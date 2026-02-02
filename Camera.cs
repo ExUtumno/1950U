@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
 
+//I need a better way to set the camera: position, direction, viewangle?
+
 class Camera
 {
     public Vector3 position, corner, horizontal, vertical; ///lower left corner

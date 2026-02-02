@@ -1,15 +1,13 @@
 ﻿/*
-какая будет первая игра: просто пылесос, который бегает по квадратику. Можно этому пылесосу даже дать довольно большую зону
+TODO 1: jumping
 
-there will be jumping mechanics, so there should be platforms. Made of cuboids
+TODO 2: don't forget there should be grass texture on the floor! Поскольку у нас всё равно рейкастинг, размер этой текстуры может быть произвольным
 
-don't forget there should be grass texture on the floor! Поскольку у нас всё равно рейкастинг, размер этой текстуры может быть произвольным
-
-abstractions are not clear so far. I should make them clear
-
+TODO 3: first person camera
+don't forget not-to-draw the player itself
 
 
-цилиндрик заменить на капсулу
+
 
 
 
@@ -60,12 +58,12 @@ static class Program
 
         RenderTexture2D target = Raylib.LoadRenderTexture(Settings.SHX, Settings.SHY);
 
-        bool PAUSED = true;
+        bool PAUSED = false;
         Raylib.SetTargetFPS(Settings.FPS); //TODO: тут нужно подучить теорию. Но давайте пока проверим, что он компилируется
 
         while (!Raylib.WindowShouldClose())
         {
-            if (Raylib.IsKeyPressed(KeyboardKey.Space)) PAUSED = !PAUSED;
+            if (Raylib.IsKeyPressed(KeyboardKey.P)) PAUSED = !PAUSED;
             if (Raylib.IsKeyPressed(KeyboardKey.S))
             {
                 Image screenshot = Raylib.LoadImageFromScreen();

@@ -77,4 +77,23 @@ static class GH
     }
     public static bool Near(Object o1, Object o2) => o1 == o2 || BodyDistance(o1, o2) <= Settings.NEAR_DISTANCE;
     public static bool Near(Object o, Vector2 p) => BodyDistance(o, p) <= Settings.NEAR_DISTANCE;
+
+    ///это всего лишь расстояние от точки до границы сцены
+    //public static float SceneSDF(Vector2 p, Vector2 sceneSize) => 
+    //    MathF.Min(MathF.Min(0.5f * sceneSize.X + p.X, 0.5f * sceneSize.X - p.X), MathF.Min(0.5f * sceneSize.Y + p.Y, 0.5f * sceneSize.Y - p.Y));
+
+    //расстояние от объекта до границы сцены?
+    /*public float SceneSDF(Object o)
+    {
+        Vector2 p = o.position.XY();
+        if (o.template.shape == SHAPE.CUBOID)
+        {
+            return MathF.Min(MathF.Min(0.5f * size.X + p.X, 0.5f * size.X - p.X) - 0.5f * o.size.X, MathF.Min(0.5f * size.Y + p.Y, 0.5f * size.Y - p.Y) - 0.5f * o.size.Y);
+        }
+        else if (o.template.shape == SHAPE.SPHERE || o.template.shape == SHAPE.CYLINDER || o.template.shape == SHAPE.CAPSULE)
+        {
+            return MathF.Min(MathF.Min(0.5f * size.X + p.X, 0.5f * size.X - p.X), MathF.Min(0.5f * size.Y + p.Y, 0.5f * size.Y - p.Y)) - o.size.AverageRadius2D();
+        }
+        else throw new Exception($"unknown shape <{o.template.shape}>");
+    }*/
 }
