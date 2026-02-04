@@ -6,6 +6,7 @@ unsafe class MyShader
     Shader shader;
     int locData, locNumObjects;
     int locEmoji;
+    int width, height;
 
     float[] texelData;
     Texture2D texture;
@@ -25,7 +26,9 @@ unsafe class MyShader
         shader.SetVec3("cameraHorizontal", camera.horizontal);
         shader.SetVec3("cameraVertical", camera.vertical);
 
-        shader.SetVec2("resolution", new Vector2(SHX, SHY));
+        width = SHX;
+        height = SHY;
+        shader.SetVec2("resolution", new Vector2(width, height));
         shader.SetVec3("groundColor", VH.Gray(1f));
 
         locData = Raylib.GetShaderLocation(shader, "data");
@@ -117,6 +120,27 @@ unsafe class MyShader
         Raylib.SetShaderValue(shader, locNumObjects, objects.Count + 1, ShaderUniformDataType.Int);
     }
 
+    public void Update(List<Object> objects, Vector2 size, Camera camera)
+    {
+        Update(objects, size);
+        UpdateCamera(camera);
+    }
+
+    public void UpdateCamera(Camera camera)
+    {
+        shader.SetVec3("cameraPosition", camera.position);
+        shader.SetVec3("cameraCorner", camera.corner);
+        shader.SetVec3("cameraHorizontal", camera.horizontal);
+        shader.SetVec3("cameraVertical", camera.vertical);
+    }
+
+    public void UpdateResolution(int newWidth, int newHeight)
+    {
+        width = newWidth;
+        height = newHeight;
+        shader.SetVec2("resolution", new Vector2(width, height));
+    }
+
     public void Draw()
     {
         Raylib.BeginShaderMode(shader);
@@ -124,7 +148,7 @@ unsafe class MyShader
         Raylib.SetShaderValueTexture(shader, locData, texture);
         //Raylib.SetShaderValueTexture(shader, locEmoji, emoji);
 
-        Raylib.DrawRectangle(0, 0, Settings.SHX, Settings.SHY, Color.White);
+        Raylib.DrawRectangle(0, 0, width, height, Color.White);
         Raylib.EndShaderMode();
     }
 

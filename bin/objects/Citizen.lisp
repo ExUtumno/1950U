@@ -1,3 +1,3 @@
 creature
-(size 0.4 1.5)
+(size 0.5 1.5)
 (color "ffec27")

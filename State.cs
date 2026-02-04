@@ -2,18 +2,18 @@
 
 struct KeyboardState
 {
-    public bool UP, DOWN, LEFT, RIGHT, USE, DROP, THROW;
+    public bool FORWARD, BACK, TURN_LEFT, TURN_RIGHT, STRAFE_LEFT, STRAFE_RIGHT, JUMP;
     public bool[] zkeys;
 
-    public KeyboardState(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool USE, bool DROP, bool THROW, bool Z, bool X, bool C, bool V, bool B, bool N, bool M)
+    public KeyboardState(bool FORWARD, bool BACK, bool TURN_LEFT, bool TURN_RIGHT, bool STRAFE_LEFT, bool STRAFE_RIGHT, bool JUMP, bool Z, bool X, bool C, bool V, bool B, bool N, bool M)
     {
-        this.UP = UP;
-        this.DOWN = DOWN;
-        this.LEFT = LEFT;
-        this.RIGHT = RIGHT;
-        this.USE = USE;
-        this.DROP = DROP;
-        this.THROW = THROW;
+        this.FORWARD = FORWARD;
+        this.BACK = BACK;
+        this.TURN_LEFT = TURN_LEFT;
+        this.TURN_RIGHT = TURN_RIGHT;
+        this.STRAFE_LEFT = STRAFE_LEFT;
+        this.STRAFE_RIGHT = STRAFE_RIGHT;
+        this.JUMP = JUMP;
         zkeys = [Z, X, C, V, B, N, M];
     }
 
@@ -111,25 +111,60 @@ class State
         self.position += new Vector3(shift, 0f);
     }
 
+    static Vector2 SafeDir(Vector2 dir)
+    {
+        float lenSq = dir.LengthSquared();
+        if (lenSq < 1e-6f) return Vector2.Zero;
+        return dir / MathF.Sqrt(lenSq);
+    }
+
+    static float GroundZ(Object self) => 0.5f * self.size.Z;
+    static bool IsOnGround(Object self) => self.position.Z <= GroundZ(self) + Settings.GROUND_EPS;
+    static void ApplyJumpAndGravity(Object self, bool jumpPressed)
+    {
+        if (jumpPressed && IsOnGround(self))
+        {
+            self.velocity.Z = Settings.JUMP_SPEED;
+        }
+
+        self.velocity.Z -= Settings.GRAVITY;
+        self.position.Z += self.velocity.Z;
+
+        float groundZ = GroundZ(self);
+        if (self.position.Z < groundZ)
+        {
+            self.position.Z = groundZ;
+            if (self.velocity.Z < 0f) self.velocity.Z = 0f;
+        }
+    }
+
     public void Step(KeyboardState keyboard)
     {
-        CS.WriteLine($"\n{currentFrame}", ConsoleColor.DarkGray);
+        //CS.WriteLine($"\n{currentFrame}", ConsoleColor.DarkGray);
         currentFrame++;
 
         for (int i = 0; i < objects.Count; i++)
         {
             Object o = objects[i];
-            CS.WriteLine(o.ToString(), ConsoleColor.DarkGray);
+            //CS.WriteLine(o.ToString(), ConsoleColor.DarkGray);
 
             float rotspeed = Settings.ROTSPEED * o.template.speed;
             if (o.isPlayer)
             {
-                CS.WriteLine($"player is {o}", ConsoleColor.Gray);
-                if (keyboard.RIGHT) o.dir = o.dir.Rotated(rotspeed);
-                if (keyboard.LEFT) o.dir = o.dir.Rotated(-rotspeed);
+                //CS.WriteLine($"player is {o}", ConsoleColor.Gray);
+                if (keyboard.TURN_RIGHT) o.dir = o.dir.Rotated(rotspeed);
+                if (keyboard.TURN_LEFT) o.dir = o.dir.Rotated(-rotspeed);
 
-                if (keyboard.UP) Go(o, o.dir);
-                else if (keyboard.DOWN) Go(o, -o.dir);
+                Vector2 move = Vector2.Zero;
+                if (keyboard.FORWARD) move += o.dir;
+                if (keyboard.BACK) move -= o.dir;
+                if (keyboard.STRAFE_LEFT) move += o.dir.Left();
+                if (keyboard.STRAFE_RIGHT) move += o.dir.Right();
+
+                Vector2 moveDir = SafeDir(move);
+                if (moveDir != Vector2.Zero) Go(o, moveDir);
+
+                ApplyJumpAndGravity(o, keyboard.JUMP);
             }
         }
     }

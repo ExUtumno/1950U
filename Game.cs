@@ -9,7 +9,7 @@ class Game
 
     public Game(Expr xgame)
     {
-        size = new Vector2(10, 10);
+        size = new Vector2(16, 16);
         templates = [];
 
         ///это делается для того, чтобы подгрузить объектные файлы

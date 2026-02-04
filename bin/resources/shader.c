@@ -357,6 +357,33 @@ vec3 pushToGreen(vec3 color, float n)
     return mix(color, vec3(0.0, 1.0, 0.0), f);
 }
 
+float hash12(vec2 p)
+{
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+vec3 grassTextureA(vec2 uv, vec2 tileId)
+{
+    const float PIXELS = 8.0;
+    vec2 cell = floor(uv * PIXELS);
+
+    float n = hash12(cell + tileId * 11.0);
+    vec3 c0 = vec3(0.26, 0.34, 0.19);
+    vec3 c1 = vec3(0.28, 0.36, 0.20);
+    return n < 0.5 ? c0 : c1;
+}
+
+vec3 grassTextureB(vec2 uv, vec2 tileId)
+{
+    const float PIXELS = 8.0;
+    vec2 cell = floor(uv * PIXELS);
+
+    float n = hash12(cell + tileId * 17.0 + 4.2);
+    vec3 c0 = vec3(0.27, 0.32, 0.19);
+    vec3 c1 = vec3(0.29, 0.34, 0.20);
+    return n < 0.5 ? c0 : c1;
+}
+
 vec3 checkerboardFloor(vec3 position)
 {
     vec2 floorSize = texelFetch(data, ivec2(0,0), 0).xy;
@@ -373,9 +400,10 @@ vec3 checkerboardFloor(vec3 position)
     if (parity < 0.0) parity += 2.0;
     float checker = parity < 1.0 ? 0.0 : 1.0;
 
-    vec3 lighter = clamp(baseColor * (1.0 + FLOOR_COLOR_VARIATION), 0.0, 1.0);
-    vec3 darker = clamp(baseColor * (1.0 - FLOOR_COLOR_VARIATION), 0.0, 1.0);
-    return mix(lighter, darker, checker);
+    vec2 tileUV = fract(local / tileSize);
+    vec3 grass = checker < 0.5 ? grassTextureA(tileUV, gridCoord) : grassTextureB(tileUV, gridCoord);
+    vec3 tint = mix(vec3(1.0), clamp(baseColor, 0.0, 1.0), 0.2);
+    return clamp(grass * tint, 0.0, 1.0);
 }
 
 vec3 render(in Ray ray)
@@ -463,7 +491,7 @@ vec3 render(in Ray ray)
 void main()
 {
     //vec2 uv = (-resolution.xy + 2.0 * gl_FragCoord.xy) / resolution.y;
-    vec2 uv = gl_FragCoord.xy / resolution.y;
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
     vec3 cameraVector = normalize(cameraCorner + uv.x * cameraHorizontal + uv.y * cameraVertical - cameraPosition);
     vec3 color = render(Ray(cameraPosition, cameraVector));
     color = pow(color, vec3(0.7));

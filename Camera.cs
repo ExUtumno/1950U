@@ -13,17 +13,38 @@ class Camera
     {
         float average = 0.5f * (scenesize.X + scenesize.Y);
         float distance = average * reldist / 6.0f;
-        float aspectRatio = 1.0f;
-
         float cos = MathF.Cos(rotangle);
         float sin = MathF.Sin(rotangle);
 
-        position = distance * new Vector3(sin * MathF.Sin(axisangle), cos * MathF.Sin(axisangle), MathF.Cos(axisangle));
-        forward = Vector3.Normalize(-position); ///(-cos, -sin)
-        up = forward.Z == 0.0f ? new Vector3(0, -1, 0) : Vector3.Normalize(new Vector3(-sin, -cos, (sin * forward.X + cos * forward.Y) / forward.Z));
-        right = Vector3.Cross(up, forward);
+        Vector3 pos = distance * new Vector3(sin * MathF.Sin(axisangle), cos * MathF.Sin(axisangle), MathF.Cos(axisangle));
+        Vector3 dir = Vector3.Normalize(-pos); ///(-cos, -sin)
+        Vector3 upHint = dir.Z == 0.0f ? new Vector3(0, -1, 0) : Vector3.Normalize(new Vector3(-sin, -cos, (sin * dir.X + cos * dir.Y) / dir.Z));
+        SetLook(pos, dir, upHint);
+    }
 
-        float vlength = 1.0f, hlength = aspectRatio * vlength;
+    public Camera(Vector3 position, Vector3 forward, Vector3 upHint)
+    {
+        SetLook(position, forward, upHint);
+    }
+
+    public void SetLook(Vector3 newPosition, Vector3 forwardDirection, Vector3 upHint)
+    {
+        position = newPosition;
+        if (forwardDirection.LengthSquared() < 1e-8f) forwardDirection = Vector3.UnitY;
+        forward = Vector3.Normalize(forwardDirection);
+
+        if (upHint.LengthSquared() < 1e-8f) upHint = Vector3.UnitZ;
+        right = Vector3.Cross(upHint, forward);
+        if (right.LengthSquared() < 1e-8f)
+        {
+            Vector3 fallbackUp = MathF.Abs(Vector3.Dot(forward, Vector3.UnitZ)) > 0.99f ? Vector3.UnitY : Vector3.UnitZ;
+            right = Vector3.Cross(fallbackUp, forward);
+        }
+        right = Vector3.Normalize(right);
+        up = Vector3.Normalize(Vector3.Cross(forward, right));
+
+        float vlength = 1.0f;
+        float hlength = Settings.WINDOW_HEIGHT == 0 ? vlength : vlength * (Settings.WINDOW_WIDTH / (float)Settings.WINDOW_HEIGHT);
         horizontal = hlength * right;
         vertical = vlength * up;
 
@@ -47,7 +68,7 @@ class Camera
     public (int, int) ScreenCoord(Vector3 point)
     {
         (float u, float v) = Projection(point);
-        int MX = Settings.SHX * Settings.SCALE, MY = Settings.SHX * Settings.SCALE; //SHY?
+        int MX = Settings.WINDOW_WIDTH, MY = Settings.WINDOW_HEIGHT;
         int sx = (int)(u * MX);
         int sy = (int)((1f - v) * MY);
         return (sx, sy);
